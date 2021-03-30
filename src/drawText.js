@@ -11,7 +11,7 @@ export const createTextConfig = ({
   ctx.fillStyle = color || "#000";
   ctx.textAlign = textAlign || "left";
   ctx.textBaseline = baseline || "alphabetic";
-  ctx.font = (fontSize || "14px") + " " + (fontFamily + "HYZhengYuan-55W");
+  ctx.font = (fontSize || "14px") + " " + (fontFamily || "HYZhengYuan-55W");
 };
 
 // 绘制一行文字
@@ -43,18 +43,22 @@ export const drawMultipleLineText = ({
   createTextConfig({ ...style, ctx });
   // 文字分行
   for (let n = 0; n < characters.length; n++) {
-    if (measureTxtWidth({ ctx, temp }) > maxLength) {
+    if (measureTxtWidth({ ctx, str: temp }) > maxLength) {
       lines.push(temp);
       temp = "";
     }
-    temp += characters[n];
+    if (separator !== "") {
+      temp = temp + characters[n] + separator;
+    } else {
+      temp += characters[n];
+    }
   }
   // 推入最后一行
   lines.push(temp);
   // 绘制文字
   for (let i = 0; i < lines.length; i++) {
-    lineSpace = lineSpace ? lastY + lineSpace : lastY;
-    ctx.fillText(lines[i], x, lineSpace);
+    const startY = lastY + lineSpace * i;
+    ctx.fillText(lines[i], x, startY);
   }
   ctx.restore();
 };
@@ -77,8 +81,24 @@ export const drawTwoStyledItemsInALine = ({
   const { style: leftStyle, text: leftText } = left;
   const { style: rightStyle, text: rightText } = right;
   const { centerX, y } = position;
+  const leftTxtFont = leftStyle.fontSize
+    ? leftStyle.fontSize + " " + leftStyle.fontFamily || "HYZhengYuan-55W"
+    : null;
+  const rightTxtFont = rightStyle.fontSize
+    ? rightStyle.fontSize + " " + rightStyle.fontFamily || "HYZhengYuan-55W"
+    : null;
   const totalLength =
-    measureTxtWidth(leftText) + measureTxtWidth(rightText) + Number(gap);
+    measureTxtWidth({
+      str: leftText,
+      ctx,
+      font: leftTxtFont,
+    }) +
+    measureTxtWidth({
+      str: rightText,
+      ctx,
+      font: rightTxtFont,
+    }) +
+    Number(gap);
   // 绘制左边文字
   const leftStartX = centerX - totalLength / 2;
   drawSingleLineText({
@@ -92,7 +112,10 @@ export const drawTwoStyledItemsInALine = ({
   });
   ctx.restore();
   // 绘制右边文字
-  const rightStartX = leftStartX + measureTxtWidth(leftText) + Number(gap);
+  const rightStartX =
+    leftStartX +
+    measureTxtWidth({ str: leftText, ctx, font: leftTxtFont }) +
+    Number(gap);
   drawSingleLineText({
     ctx,
     text: rightText,

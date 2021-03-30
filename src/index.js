@@ -21,7 +21,7 @@ const initCanvas = ({ canvasId, width, height }) => {
   canvasEl.height = height;
   canvasEl.style.display = "none";
   document.body.appendChild(canvasEl);
-  return canvasEl.getContext("2d");
+  return { context: canvasEl.getContext("2d"), dom: canvasEl };
 };
 
 const getPosterBase64 = (canvas) => {
