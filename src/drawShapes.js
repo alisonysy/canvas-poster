@@ -19,29 +19,53 @@ export const createShapeConfig = ({
 };
 
 /**
- * 绘制圆角矩形
+ * 绘制空心圆角矩形
  * @param {object} ctx canvas上下文
- * @param {object} style 圆角矩形样式，包含fillStyle, strokeStyle, lineWidth, path
+ * @param {object} style 圆角矩形样式，包含strokeStyle, lineWidth, path
  * @param {object} position 圆角坐标对象，包含centerX, centerY, width, height, radius
  */
-export const drawRectWithRoundCorners = ({ ctx, style, position, errMsg }) => {
-  const { centerX, centerY, width, height, radius = 0 } = position;
+export const drawRectWithRoundCorners = ({
+  ctx,
+  style = {},
+  position = {},
+  errMsg,
+}) => {
+  const {
+    centerX = 100,
+    centerY = 100,
+    width = 100,
+    height = 100,
+    radius = 10,
+  } = position;
   try {
     ctx.beginPath();
-    const topStartY = centerY - height / 2 + radius;
-    const bottomStartY = centerY + height / 2 - radius;
-    const startX = centerX - width / 2 + radius;
-    const endX = centerX + width / 2 - radius;
+    const topStartY = radius > height ? centerY : centerY - height / 2 + radius;
+    const bottomStartY =
+      radius > height ? centerY : centerY + height / 2 - radius;
+    const startX = radius > width ? centerX : centerX - width / 2 + radius;
+    const endX = radius > width ? centerX : centerX + width / 2 - radius;
+    // 绘制左上圆角
     ctx.arc(startX, topStartY, radius, (Math.PI * 3) / 2, Math.PI, true);
-    ctx.lineTo(centerX - width / 2, bottomStartY);
+    ctx.moveTo(startX - radius, topStartY);
+    // 绘制矩形左边
+    ctx.lineTo(startX - radius, bottomStartY);
+    // 绘制坐下圆角
     ctx.arc(startX, bottomStartY, radius, Math.PI, Math.PI / 2, true);
-    ctx.lineTo(endX, bottomStartY);
-    ctx.arc(endX, bottomStartY, radius, Math.PI, 0, true);
-    ctx.lineTo(centerX + width / 2, topStartY);
+    ctx.moveTo(startX, bottomStartY + radius);
+    // 绘制矩形底边
+    ctx.lineTo(endX, bottomStartY + radius);
+    // 绘制右下圆角
+    ctx.arc(endX, bottomStartY, radius, Math.PI / 2, 0, true);
+    ctx.moveTo(endX + radius, bottomStartY);
+    // 绘制矩形右边
+    ctx.lineTo(endX + radius, topStartY);
+    // 绘制右上圆角
     ctx.arc(endX, topStartY, radius, 0, (Math.PI * 3) / 2, true);
+    ctx.moveTo(endX, topStartY - radius);
+    // 绘制矩形上边，并闭合
+    ctx.lineTo(startX, topStartY - radius);
     ctx.closePath();
-    // #todo: closePath之后调用lineWidth等能否起效
-    createShapeConfig({ ctx, ...style });
+    createShapeConfig({ ctx, strokeStyle: "#000000", ...style });
   } catch (e) {
     throw new Error(errMsg || e);
   }

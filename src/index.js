@@ -16,7 +16,9 @@ const initCanvas = ({ canvasId, width, height }) => {
     dom.parentNode.removeChild(dom);
   }
   const canvasEl = document.createElement("canvas");
+  if (!canvasId) throw Error("请提供canvas元素ID");
   canvasEl.id = canvasId;
+  if (!width || !height) throw Error("请提供画布的高度和宽度");
   canvasEl.width = width;
   canvasEl.height = height;
   canvasEl.style.display = "none";
@@ -25,7 +27,7 @@ const initCanvas = ({ canvasId, width, height }) => {
 };
 
 const getPosterBase64 = (canvas) => {
-  return canavas && canvas.toDataURL && canvas.toDataURL();
+  return canvas && canvas.toDataURL && canvas.toDataURL();
 };
 
 export { initCanvas, getPosterBase64 };

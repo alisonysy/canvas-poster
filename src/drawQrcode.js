@@ -1,6 +1,6 @@
 export default function ({ ctx, errMsg, src, position }) {
   ctx.save();
-  const { x, y, width, height } = position;
+  const { x = 0, y = 0, width = 100, height = 100 } = position || {};
   const img = document.createElement("img");
   return new Promise((resolve, reject) => {
     img.setAttribute("crossOrigin", "anonymous");
