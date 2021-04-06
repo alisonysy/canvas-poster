@@ -70,3 +70,66 @@ export const drawRectWithRoundCorners = ({
     throw new Error(errMsg || e);
   }
 };
+
+/**
+ * 绘制圆角矩形（arcTo)
+ * @param {object} ctx canvas上下文
+ * @param {object} style 圆角矩形样式，包含fillStyle, strokeStyle, lineWidth, path
+ * @param {object} position 圆角坐标对象，包含centerX, centerY, width, height, radius
+ */
+export const drawRoundRect = ({ ctx, position = {}, style = {}, errMsg }) => {
+  const {
+    centerX = 100,
+    centerY = 100,
+    width = 100,
+    height = 100,
+    radius = 10,
+  } = position;
+  try {
+    const topLeftStartPoint = {
+      x: centerX - width / 2 + radius,
+      y: centerY - height / 2,
+    };
+    const topRightPoint = { x: centerX + width / 2, y: centerY - height / 2 };
+    const bottomRightPoint = {
+      x: centerX + width / 2,
+      y: centerY + height / 2,
+    };
+    const bottomLeftPoint = { x: centerX - width / 2, y: centerY + height / 2 };
+    const topLeftPoint = { x: centerX - width / 2, y: centerY - height / 2 };
+    ctx.beginPath();
+    ctx.moveTo(topLeftStartPoint.x, topLeftStartPoint.y);
+    ctx.arcTo(
+      topRightPoint.x,
+      topRightPoint.y,
+      bottomRightPoint.x,
+      bottomRightPoint.y,
+      radius
+    );
+    ctx.arcTo(
+      bottomRightPoint.x,
+      bottomRightPoint.y,
+      bottomLeftPoint.x,
+      bottomLeftPoint.y,
+      radius
+    );
+    ctx.arcTo(
+      bottomLeftPoint.x,
+      bottomLeftPoint.y,
+      topLeftPoint.x,
+      topLeftPoint.y,
+      radius
+    );
+    ctx.arcTo(
+      topLeftPoint.x,
+      topLeftPoint.y,
+      topLeftStartPoint.x,
+      topLeftStartPoint.y,
+      radius
+    );
+    ctx.closePath();
+    createShapeConfig({ ctx, ...style });
+  } catch (e) {
+    throw new Error(errMsg || e);
+  }
+};

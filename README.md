@@ -9,6 +9,7 @@ import {
   drawBackground, // 绘制海报背景
   drawQrcode, // 绘制二维码
   drawRectWithRoundCorners, // 绘制空心圆角矩形
+  drawRoundRect, // 绘制空心/实心圆角矩形
   createShareConfig, // 设置图形样式，如fillStyle, strokeStyle, lineWidth
   createTextConfig, // 设置文字样式，如font
   drawSingleLineText, // 绘制单行文字
@@ -58,6 +59,26 @@ ctx (required): canvas上下文
 style (optional): 圆角矩形样式
   strokeStyle: 矩形边框颜色，默认为#000000
   lineWidth: 矩形边框粗细，默认为1
+position (optional): 矩形的坐标和大小等
+  centerX: 矩形中心横坐标，默认100
+  centerY: 矩形中心纵坐标，默认100
+  width: 矩形宽度，默认100
+  height: 矩形高度，默认100
+  radius: 矩形圆角的半径，默认10
+errMsg (optional): 若报错，显示的文字，默认是绘制矩形时候可能出现的浏览器报错
+```
+
+### drawRoundRect 绘制空心/实心圆角矩形
+
+通常用于绘制圆角的分割线，与`drawRectWithRoundCorners`的区别在于，`drawRoundRect`使用`arcTo`进行绘制，若`radius > width`，`drawRoundRect`绘制出来的是类似四角星的形状；而`drawRectWithRoundCorners`使用`arc`进行绘制，若`radius > width`，它绘制出来的仍然是圆角矩形。
+接收参数：
+
+```
+ctx (required): canvas上下文
+style (optional): 圆角矩形样式
+  fillStyle: 矩形填充颜色，不传则透明
+  strokeStyle: 矩形边框颜色，不传则投屏
+  lineWidth: 矩形边框粗细，若有strokeStyle，默认为1
 position (optional): 矩形的坐标和大小等
   centerX: 矩形中心横坐标，默认100
   centerY: 矩形中心纵坐标，默认100

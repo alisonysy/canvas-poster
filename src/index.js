@@ -1,6 +1,10 @@
 export { default as drawBackground } from "./drawBackground";
 export { default as drawQrcode } from "./drawQrcode";
-export { drawRectWithRoundCorners, createShapeConfig } from "./drawShapes";
+export {
+  drawRectWithRoundCorners,
+  createShapeConfig,
+  drawRoundRect,
+} from "./drawShapes";
 export {
   createTextConfig,
   drawSingleLineText,
